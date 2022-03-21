@@ -3,26 +3,18 @@
 PREFIX="../data/raw"
 rm -rf "${PREFIX}"
 
-# RAW DOWNLOADED DATA
-TRAIN_DATA_NAME="${PREFIX}/BSR/BSDS500/data/images/train"
-VAL_DATA_NAME="${PREFIX}/BSR/BSDS500/data/images/val"
-TEST_DATA_NAME="${PREFIX}/BSR/BSDS500/data/images/test"
-
 # LOAD BSD500 DATASET
 wget http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/BSR/BSR_bsds500.tgz -P ../data/raw
 tar -xvzf "${PREFIX}/BSR_bsds500.tgz" --directory ${PREFIX}
 
+#  MERGE DATASET
+TRAIN_DATA="${PREFIX}/BSR/BSDS500/data/images/train"
+VAL_DATA="${PREFIX}/BSR/BSDS500/data/images/val"
+TEST_DATA="${PREFIX}/BSR/BSDS500/data/images/test"
 
-#  DATA
-TRAIN_PROCESSED="../data/train"
-TEST_PROCESSED="../data/test"
+MERGED="${PREFIX}/merged" 
+./merge.py $TRAIN_DATA $VAL_DATA $TEST_DATA -o $MERGED
 
-rm -rf $TRAIN_PROCESSED
-rm -rf $TEST_PROCESSED
-
-mkdir -p $TRAIN_PROCESSED
-mkdir -p $TEST_PROCESSED
-
-
-# TODO 
-# run python processing from script
+# TRAIN-TEST SPLIT
+./split.py $MERGED "../data" -s -r 42 -n 68
+rm -rf "${PREFIX}"

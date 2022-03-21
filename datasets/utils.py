@@ -34,36 +34,15 @@ def save_images(images, filenames, target_ext=None):
         image.save(filename)
 
 
-def process_dataset(input_dir, output_dir, transform=None, target_ext=None, extensions=IMG_EXTS):
+def enumerate_filenames(filelist, target_ext=None, start_idx=0):
     '''
     '''
-
-    filelist = get_filelist(input_dir, extensions)
 
     ext_list = [target_ext] * len(filelist) if target_ext is not None else [
         os.path.splitext(filename)[1]
         for filename in filelist
     ]
 
-    out_filelist = [
-        os.path.join(output_dir, f'{(idx):08d}{ext}')
-        for idx, ext in enumerate(ext_list)
+    return [
+        f'{(start_idx+idx):08d}{ext}' for idx, ext in enumerate(ext_list)
     ]
-
-    if target_ext is None and transform is None:
-        # simply copy images with new names
-        for src, dst in zip(filelist, out_filelist):
-            shutil.copyfile(src, dst)
-    else:
-        # load images, tranform them and save with new names
-        save_images(
-            load_images(filelist, transform),
-            out_filelist
-        )
-
-
-def merge_datasets(input_dirs: list, output_dir: str, transform=None, target_ext=None, extensions=IMG_EXTS):
-    idx_shift = 0
-    for input_dir in input_dirs:
-        # TODO
-        idx_shift += len(get_filelist(input_dir, extensions))
