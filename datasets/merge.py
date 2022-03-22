@@ -4,8 +4,8 @@ import os
 import shutil
 import argparse
 
-from utils import get_filelist, enumerate_filenames
-from utils import IMG_EXTS
+from common import get_filelist, enumerate_filenames
+from common import IMG_EXTS
 
 
 def merge_datasets(input_dirs: list, output_dir: str, target_ext=None, extensions=IMG_EXTS):

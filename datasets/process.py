@@ -6,8 +6,9 @@ import argparse
 from functools import partial
 
 import transforms
-from utils import get_filelist, enumerate_filenames, save_images, load_images
-from utils import IMG_EXTS
+from common import get_filelist, enumerate_filenames
+from common import save_images, load_images
+from common import IMG_EXTS
 
 
 def process_dataset(input_dir, output_dir, transform=None, target_ext=None, extensions=IMG_EXTS):

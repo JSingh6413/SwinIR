@@ -1,48 +1,33 @@
-import os
-import shutil
-from PIL import Image
+from torchvision import transforms
+from torch.utils.data import Dataset
+
+from .common import load_images, get_filelist
+from .transforms import gaussian_noise
+
+import numpy as np
 
 
-IMG_EXTS = ['.png', '.jpg', '.jpeg', '.gif', '.tif']
+class NoisyDataset(Dataset):
+    def __init__(self, img_dir, transform=None, return_std=False):
+        self.img_dir = img_dir
+        self.images = load_images(
+            get_filelist(self.img_dir),
+            transform=transform
+        )
+        self.return_std = return_std
 
+        self.img_to_torch = transforms.PILToTensor()
+        self.torch_to_img = transforms.ToPILImage()
 
-def get_filelist(input_dir: str, extensions=IMG_EXTS):
-    '''
-    '''
-    return sorted([
-        os.path.join(input_dir, filename)
-        for filename in os.listdir(input_dir)
-        if os.path.splitext(filename)[-1].lower() in extensions
-    ])
+    def __len__(self):
+        return len(self.images)
 
+    def __getitem__(self, idx):
+        std = np.random.randint(10, 56) / 255.0
+        noisy = gaussian_noise(self.torch_to_img(self.images[idx]), std=std)
 
-def load_images(filelist, transform=None):
-    '''
-    '''
-    images = [Image.open(filename) for filename in filelist]
-    return images if transform is None else [
-        transform(image) for image in images
-    ]
-
-
-def save_images(images, filenames, target_ext=None):
-    '''
-    '''
-    for image, filename in zip(images, filenames):
-        if target_ext is not None:
-            filename = os.path.splitext(filename)[0] + target_ext
-        image.save(filename)
-
-
-def enumerate_filenames(filelist, target_ext=None, start_idx=0):
-    '''
-    '''
-
-    ext_list = [target_ext] * len(filelist) if target_ext is not None else [
-        os.path.splitext(filename)[1]
-        for filename in filelist
-    ]
-
-    return [
-        f'{(start_idx+idx):08d}{ext}' for idx, ext in enumerate(ext_list)
-    ]
+        if not self.return_std:
+            return self.img_to_torch(noisy) / 255.0, self.images[idx]
+        else:
+            # need to be done for projection layer
+            raise NotImplementedError()

@@ -5,7 +5,7 @@ import shutil
 import random
 import argparse
 
-from utils import get_filelist, enumerate_filenames
+from common import get_filelist, enumerate_filenames
 
 
 def split(input_dir, output_dir, shuffle=False, random_state=None, n_test=None, percentage=0.2):
