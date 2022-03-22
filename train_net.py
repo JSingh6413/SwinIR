@@ -65,6 +65,7 @@ if __name__ == '__main__':
     # Choose model
     model = models[args.model]().to(device)
     optimizer = torch.optim.Adam(model.parameters())
+    print(f'Using model: {args.model}\n')
 
     # Init directory for pretrained
     runs = glob(os.path.join(args.results_dir, args.model, '*'))
