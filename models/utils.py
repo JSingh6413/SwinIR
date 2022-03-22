@@ -7,12 +7,11 @@ from tqdm import tqdm
 def train_loop(model, dataloader, loss_fn, optimizer, device='cpu'):
 
     losses = []
-    for X, y in tqdm(dataloader, desc="\tBatch #", ncols=80):
-        X, y = X.to(device), y.to(device)
+    for x, y in tqdm(dataloader, desc="\tBatch #", ncols=80):
+        x, y = x.to(device), y.to(device)
 
         # evaluate
-        pred = model(X)
-        loss = loss_fn(pred, y)
+        loss = loss_fn(model(x), y) / len(x)
 
         # backpropagation
         optimizer.zero_grad()
@@ -26,17 +25,24 @@ def train_loop(model, dataloader, loss_fn, optimizer, device='cpu'):
 
 def test_loop(model, dataloader, loss_fn, device='cpu'):
 
-    losses = []
+    loss = 0
     with torch.no_grad():
-        for X, y in tqdm(dataloader, desc="\tBatch #", ncols=80):
+        for x, y in tqdm(dataloader, desc="\tBatch #", ncols=80):
+            x, y = x.to(device), y.to(device)
+            loss += loss_fn(model(x), y).item()
 
-            X, y = X.to(device), y.to(device)
-
-            pred = model(X)
-            losses.append(loss_fn(pred, y).item())
-
-    return np.mean(losses)
+    return loss / len(dataloader.dataset)
 
 
 def charbonnier_loss(output, target, eps=1e-3):
     return (torch.norm(target - output) ** 2 + eps ** 2) ** 0.5
+
+
+def save_model(model, path):
+    torch.save(model, path)
+
+
+def load_model(path):
+    model = torch.load(path)
+    model.eval()
+    return model

@@ -2,6 +2,7 @@
 .DS_Store
 data/
 ongoing/
+pretrained_models/
 tests.ipynb
 *.jpg    
 
