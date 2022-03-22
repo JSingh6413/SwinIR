@@ -15,6 +15,10 @@ TEST_DATA="${PREFIX}/BSR/BSDS500/data/images/test"
 MERGED="${PREFIX}/merged" 
 ./merge.py $TRAIN_DATA $VAL_DATA $TEST_DATA -o $MERGED
 
+# # ROTATE ALL TO HORIZONTAL
+ROTATED="${PREFIX}/rotated"
+./process.py $MERGED $ROTATED -t
+
 # TRAIN-TEST SPLIT
-./split.py $MERGED "../data" -s -r 42 -n 68
+./split.py $ROTATED "../data" -s -r 42 -n 68
 rm -rf "${PREFIX}"

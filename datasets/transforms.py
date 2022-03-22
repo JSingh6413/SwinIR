@@ -12,6 +12,11 @@ def np_to_img(array: np.ndarray):
     return Image.fromarray((array * 255.0).astype(np.uint8))
 
 
+def to_horizontal(img: Image):
+    width, height = img.size
+    return img if width >= height else img.transpose(Image.ROTATE_90)
+
+
 def rescale(image: Image, scale=0.25):
     width, height = image.size
     width, height = round(width * scale), round(height * scale)

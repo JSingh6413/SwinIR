@@ -21,12 +21,15 @@ def process_dataset(input_dir, output_dir, transform=None, target_ext=None, exte
 
     # process
     filelist = get_filelist(input_dir, extensions)
-    out_filelist = enumerate_filenames(filelist, target_ext)
+    out_filelist = [
+        os.path.join(output_dir, filename)
+        for filename in enumerate_filenames(filelist, target_ext)
+    ]
 
     if target_ext is None and transform is None:
         # simply copy images with new names
         for src, dst in zip(filelist, out_filelist):
-            shutil.copyfile(src, os.path.join(output_dir, dst))
+            shutil.copyfile(src, dst)
     else:
         # load images, tranform them and save with new names
         save_images(
@@ -77,9 +80,17 @@ if __name__ == '__main__':
         '--extensions', nargs='+', type=str, default=IMG_EXTS,
         help='files extensions to filter: ".ext_1" ".ext_2" ... ".ext_n"'
     )
+    parser.add_argument(
+        '-t', '--transpose', default=False, action='store_true',
+        help='rotate image to horizontal orientation'
+    )
     args = parser.parse_args()
 
     transforms_list = []
+
+    if args.transpose:
+        transforms_list.append(transforms.to_horizontal)
+
     if args.rescale is not None:
         transforms_list.append(partial(transforms.rescale, scale=args.rescale))
 
