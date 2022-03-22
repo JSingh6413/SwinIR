@@ -896,12 +896,13 @@ class SwinIR(nn.Module):
 
 
 class BlindSwinIR(nn.Module):
+    '''Lightweight version of SwinIR'''
 
-    def __init__(self, img_size=128):
+    def __init__(self, img_size=64):
         super().__init__()
         self.net = SwinIR(
             upscale=1, in_chans=3, img_size=img_size, window_size=8,
-            img_range=1., depths=[6, 6, 6, 6, 6, 6], embed_dim=180, num_heads=[6, 6, 6, 6, 6, 6],
+            img_range=1., depths=[6, 6, 6, 6], embed_dim=60, num_heads=[6, 6, 6, 6],
             mlp_ratio=2, upsampler='', resi_connection='1conv'
         )
 
