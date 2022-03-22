@@ -898,7 +898,7 @@ class SwinIR(nn.Module):
 class BlindSwinIR(nn.Module):
     '''Lightweight version of SwinIR'''
 
-    def __init__(self, img_size=64):
+    def __init__(self, img_size=128):
         super().__init__()
         self.net = SwinIR(
             upscale=1, in_chans=3, img_size=img_size, window_size=8,
@@ -912,18 +912,22 @@ class BlindSwinIR(nn.Module):
 
 class ProjectionSwinIR(SwinIR):
 
-    def __init__(self, img_size=64):
+    def __init__(self, img_size=128):
         super().__init__(
             img_size=img_size, upscale=1, in_chans=3, window_size=8,
             img_range=1., depths=[6, 6, 6, 6], embed_dim=60, num_heads=[6, 6, 6, 6],
             mlp_ratio=2, upsampler='', resi_connection='1conv'
         )
         # number of pixels in the image
-        self.N_t = torch.tensor([img_size ** 2], dtype=torch.float32)
-        self.alpha = torch.nn.Parameter(torch.rand(1), requires_grad=True)
+        self.register_parameter(
+            name='alpha', param=nn.Parameter(
+                torch.rand(1), requires_grad=True
+            )
+        )
+        self.N_t = img_size ** 2
 
     def projection_part(self, x, y, sigma):
-        eps = torch.exp(self.alpha) * sigma * torch.sqrt(self.N_t - 1)
+        eps = torch.exp(self.alpha) * sigma * ((self.N_t - 1) ** 0.5)
         return y + eps * (x - y) / torch.max(torch.linalg.norm(x - y), eps)
 
     def forward(self, x):
