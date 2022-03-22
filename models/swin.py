@@ -910,9 +910,41 @@ class BlindSwinIR(nn.Module):
         return self.net(X)
 
 
-class ProjectionSwinIR(nn.Module):
-    def __init__(self, img_size=128):
-        raise NotImplementedError()
+class ProjectionSwinIR(SwinIR):
 
-    def forward(self, X):
-        raise NotImplementedError()
+    def __init__(self, img_size=64):
+        super().__init__(
+            img_size=img_size, upscale=1, in_chans=3, window_size=8,
+            img_range=1., depths=[6, 6, 6, 6], embed_dim=60, num_heads=[6, 6, 6, 6],
+            mlp_ratio=2, upsampler='', resi_connection='1conv'
+        )
+        # number of pixels in the image
+        self.N_t = torch.tensor([img_size ** 2], dtype=torch.float32)
+        self.alpha = torch.nn.Parameter(torch.rand(1), requires_grad=True)
+
+    def projection_part(self, x, y, sigma):
+        eps = torch.exp(self.alpha) * sigma * torch.sqrt(self.N_t - 1)
+        return y + eps * (x - y) / torch.max(torch.linalg.norm(x - y), eps)
+
+    def forward(self, x):
+        x, sigma = x
+
+        H, W = x.shape[2:]
+        x = self.check_image_size(x)
+
+        x_origin = x.clone()
+
+        self.mean = self.mean.type_as(x)
+        x = (x - self.mean) * self.img_range
+
+        x_first = self.conv_first(x)
+
+        res = self.conv_after_body(
+            self.forward_features(x_first)
+        ) - x_first  # ?
+
+        x = x + self.conv_last(res)
+        x = x / self.img_range + self.mean
+        x = self.projection_part(x, x_origin, sigma)
+
+        return x[:, :, :H * self.upscale, :W * self.upscale]

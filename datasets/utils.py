@@ -1,3 +1,4 @@
+import torch
 from torchvision import transforms
 from torch.utils.data import Dataset
 
@@ -29,5 +30,7 @@ class NoisyDataset(Dataset):
         if not self.return_std:
             return self.img_to_torch(noisy) / 255.0, self.images[idx]
         else:
-            # need to be done for projection layer
-            raise NotImplementedError()
+            return (
+                self.img_to_torch(noisy) / 255.0,
+                torch.tensor([std], dtype=torch.float32),
+            ), self.images[idx]

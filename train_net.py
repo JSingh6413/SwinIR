@@ -125,10 +125,10 @@ if __name__ == '__main__':
             ('\n' if args.train_only else f'\t\tTest loss: [{test_loss:.4f}]\n')
         )
 
-        if compare_loss < best_loss:
+        if compare_loss < best_loss or epoch + 1 == args.epochs:
             best_loss = compare_loss
             path = os.path.join(
-                results_dir, f'e[{epoch+1:03d}]_l[{best_loss:.4f}]'
+                results_dir, f'e[{epoch+1:03d}]_l[{best_loss:.4f}].pt'
             )
             save_model(model, path)
             print('\tMODEL SAVED\n')

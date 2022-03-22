@@ -8,7 +8,11 @@ def train_loop(model, dataloader, loss_fn, optimizer, device='cpu'):
 
     losses = []
     for x, y in tqdm(dataloader, desc="\tBatch #", ncols=80):
-        x, y = x.to(device), y.to(device)
+        if isinstance(x, tuple):
+            x = (x[0].to(device), x[1].to(device))
+            y = y.to(device)
+        else:
+            x, y = x.to(device), y.to(device)
 
         # evaluate
         loss = loss_fn(model(x), y) / len(x)
@@ -28,7 +32,11 @@ def test_loop(model, dataloader, loss_fn, device='cpu'):
     loss = 0
     with torch.no_grad():
         for x, y in tqdm(dataloader, desc="\tBatch #", ncols=80):
-            x, y = x.to(device), y.to(device)
+            if isinstance(x, tuple):
+                x = (x[0].to(device), x[1].to(device))
+                y = y.to(device)
+            else:
+                x, y = x.to(device), y.to(device)
             loss += loss_fn(model(x), y).item()
 
     return loss / len(dataloader.dataset)
