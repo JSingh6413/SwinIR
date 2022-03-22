@@ -8,7 +8,7 @@ def train_loop(model, dataloader, loss_fn, optimizer, device='cpu'):
 
     losses = []
     for x, y in tqdm(dataloader, desc="\tBatch #", ncols=80):
-        if isinstance(x, tuple):
+        if isinstance(x, list):
             x = (x[0].to(device), x[1].to(device))
             y = y.to(device)
         else:
