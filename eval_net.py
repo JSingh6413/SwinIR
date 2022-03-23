@@ -69,5 +69,7 @@ if __name__ == '__main__':
         if isinstance(model, ProjectionSwinIR):
             x = (x, args.std)
 
-        img = torch_to_img(torch.squeeze(model(x)))
+        with torch.no_grad():
+            img = torch_to_img(torch.squeeze(model(x)))
+
         img.save(os.path.join(args.output_dir, filename))
