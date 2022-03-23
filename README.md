@@ -60,7 +60,16 @@ There are two main predefined processing pipelines:
 ```./process.py -h``` - apply given transforms from ```transforms.py```: blur with custom or gaussian kernel, rescale, add gaussian noise, etc.
   
 ## Main scripts
+```./train_net.py -h``` - train one of the default Networks: **DummyNet**, **BlindSwinIR** or **ProjectionSwinIR** on given data. Training support validaion and savind checkpoints. \
+```./eval_net.py -h``` - evaluate saved network on data. \
+```./eval_on_blur80.py -h``` - a wrapper for evaluating **ProjectionSwinIR** on fetched Sun dataset. \
+```./deblur.py -h``` - a wrapper for evaluating **FISTA** on denoised fetched Sun dataset. \
+```./metrics.py -h``` - calc SSIM and PSNR between two datasets. Images must have same names.
 
+## Pretrained models
 
+Pretrained nets (13 epochs for **BlindSwinIR**, 14 epochs for **ProjectionSwinIR** and 30 - for **DummyNet**) can be downloaded from [google drive](https://drive.google.com/drive/folders/1CHyC6CHViJ3EPaU6C2dl1NwZp_iBRwHq?usp=sharing).
+
+```./train.py -h``` supports multiple training cycles. Each set of checkpoints will be saved in separate directory inside ```pretrained_models```.
 
 ## Experiments
