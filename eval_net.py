@@ -63,13 +63,17 @@ if __name__ == '__main__':
     for filepath in tqdm(filelist, desc="Image #", ncols=80):
         filename = os.path.basename(filepath)
         x = (img_to_torch(Image.open(filepath))[None, ...] / 255.0).to(device)
-        if len(x.shape) == 3:
-            x = torch.stack([x, x, x], axis=1)
+
+        grayscale = (x.shape[1] == 1)
 
         if isinstance(model, ProjectionSwinIR):
             x = (x, args.std)
 
         with torch.no_grad():
-            img = torch_to_img(torch.squeeze(model(x)))
+            y = torch.squeeze(model(x))
 
+        if grayscale:
+            y = y[0] * 0.2989 + y[1] * 0.5870 + y[2] * 0.1140
+
+        img = torch_to_img(y)
         img.save(os.path.join(args.output_dir, filename))
