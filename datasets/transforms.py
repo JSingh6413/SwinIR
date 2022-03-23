@@ -9,7 +9,7 @@ def img_to_np(image: Image):
 
 
 def np_to_img(array: np.ndarray):
-    return Image.fromarray((array * 255.0).astype(np.uint8))
+    return Image.fromarray(np.squeeze(array * 255.0).astype(np.uint8))
 
 
 def to_horizontal(img: Image):
@@ -30,7 +30,8 @@ def gaussian_kernel(size=5, sigma=2):
 
 
 def load_kernel(kernel_path):
-    return img_to_np(Image.open(kernel_path))
+    kernel = img_to_np(Image.open(kernel_path))
+    return kernel / kernel.sum()
 
 
 def blur(image, kernel=gaussian_kernel()):
@@ -47,4 +48,4 @@ def blur(image, kernel=gaussian_kernel()):
 def gaussian_noise(image, loc=0.0, std=5e-2):
     (width, height), channels = image.size, len(image.split())
     noise = np.random.normal(loc, std, (height, width, channels))
-    return np_to_img(np.clip(img_to_np(image) + noise, 0, 1))
+    return np_to_img(np.clip(img_to_np(image) + np.squeeze(noise), 0, 1))
