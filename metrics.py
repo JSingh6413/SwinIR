@@ -37,7 +37,7 @@ def compute_metrics(gt_dir, noise_dir):
     ssim_mean = np.mean(ssim_values)
     psnr_mean = np.mean(psnr_values)
 
-    print(f'SSIM: {ssim_mean:.4f}\t|\PSNR: {psnr_mean:.4f}')
+    print(f'SSIM: {ssim_mean:.4f}\t|\tPSNR: {psnr_mean:.4f}')
 
     return ssim_mean, psnr_mean
 
