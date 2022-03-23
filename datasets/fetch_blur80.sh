@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PREFIX="../data/raw/blur80"
+PREFIX="../data/raw/"
 rm -rf "${PREFIX}"
 
 # LOAD SUN 80 DATASET WITH KERNELS
@@ -40,4 +40,4 @@ do
     let i=$i+1
 done
 
-rm -rf "${PREFIX}"
+rm -rf $PREFIX
