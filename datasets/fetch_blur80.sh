@@ -24,6 +24,7 @@ BLURRED="${OUTPUT_DIR}/blurred"
 NOISED="${OUTPUT_DIR}/noised"
 
 ./process.py $IMAGES $GT
+mkdir "${OUTPUT_DIR}/kernels"
 
 let i=0
 for file in $(ls $KERNELS)
@@ -35,6 +36,7 @@ do
     do
         ./process.py "$BLURRED/kernel_${i}" "$NOISED/${std}/kernel_${i}" -s $std
     done
+    cp "${KERNELS}/${file}" "${OUTPUT_DIR}/kernels/kernel_${i}.png"
     let i=$i+1
 done
 
