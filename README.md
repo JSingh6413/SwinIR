@@ -73,7 +73,6 @@ Pretrained nets (13 epochs for **BlindSwinIR**, 14 epochs for **ProjectionSwinIR
 ```./train.py -h``` supports multiple training cycles. Each set of checkpoints will be saved in separate directory inside ```pretrained_models```.
 
 ## Experiments
-## Experiments
 Details about experiments can be found in [report](https://drive.google.com/file/d/1LF7yk1exeQ5cLmijzI17GrOHtsL8mC8I/view?usp=sharing).
 
 A small example of "lucky denoising":
