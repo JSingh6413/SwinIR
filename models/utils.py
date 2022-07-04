@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 
 def train_loop(model, dataloader, loss_fn, optimizer, device='cpu'):
+    model.train()
 
     losses = []
     for x, y in tqdm(dataloader, desc="\tBatch #", ncols=80):
@@ -28,6 +29,7 @@ def train_loop(model, dataloader, loss_fn, optimizer, device='cpu'):
 
 
 def test_loop(model, dataloader, loss_fn, device='cpu'):
+    model.eval()
 
     loss = 0
     with torch.no_grad():
